@@ -575,19 +575,25 @@ def handle_message(bot: TelegramBot, msg: Dict, bot_username: str):
 
     # ==================== COMMANDS ====================
     if text == "/start" or text.startswith("/start"):
-        welcome = (
-            f"👋 <b>আসসালামু আলাইকুম, {first_name}!</b>\n\n"
-            "✨ <b>Ultra ID & Info Finder Bot</b>-এ আপনাকে স্বাগতম!\n\n"
-            "🚀 <b>এই বট দিয়ে যা যা করতে পারবেন:</b>\n"
-            "• 👤 যেকোনো ইউজারের আইডি ও তথ্য বের করা\n"
-            "• 🌐 পাবলিক ও প্রাইভেট গ্রুপের সঠিক আইডি (-100...) বের করা\n"
-            "• 📢 পাবলিক ও প্রাইভেট চ্যানেলের আইডি বের করা\n"
-            "• 🤖 যেকোনো টেলিগ্রাম বটের আইডি বের করা\n"
-            "• ⭐ টেলিগ্রাম প্রিমিয়াম ইউজার ডিটেক্ট করা\n"
-            "• 📩 যেকোনো মেসেজ <b>ফরওয়ার্ড (Forward)</b> করলেই তার সোর্স আইডি বের করা!\n\n"
-            "👇 <b>নিচের রঙিন বাটনগুলোতে চাপ দিয়ে সহজেই যেকোনো আইডি খুঁজে নিন:</b>"
+        l_name = msg["from"].get("last_name", "N/A")
+        is_prem = "✅ হ্যাঁ" if msg["from"].get("is_premium") else "❌ না"
+        profile_link = f"https://t.me/{username}" if username else f"tg://user?id={user_id}"
+
+        start_card = (
+            "┏─━─━─━─━─━─━─━─━─━─━─━─━─━─┓\n"
+            "  <b>USER INFO 👤 (আপনার তথ্য)</b>\n"
+            "┗─━─━─━─━─━─━─━─━─━─━─━─━─━─┛\n"
+            f"  📛 <b>নাম ➔</b> {first_name}\n"
+            f"  📇 <b>পদবি ➔</b> {l_name}\n"
+            f"  🆔 <b>ইউজার আইডি ➔</b> <code>{user_id}</code>\n"
+            f"  🔗 <b>ইউজারনেম ➔</b> @{username if username else 'N/A'}\n"
+            f"  💎 <b>প্রিমিয়াম ➔</b> {is_prem}\n"
+            f"  🌐 <b>প্রোফাইল লিংক ➔</b> {profile_link}\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "💡 <i>আপনার আইডি নম্বরে ট্যাপ করলেই স্বয়ংক্রিয়ভাবে কপি হয়ে যাবে!</i>\n\n"
+            "👇 <b>অন্যান্য ইউজার, গ্রুপ বা চ্যানেলের আইডি দেখতে নিচের রঙিন বাটন চাপুন:</b>"
         )
-        bot.send_message(chat_id, welcome, reply_markup=main_finder_keyboard(user_id))
+        bot.send_message(chat_id, start_card, reply_markup=main_finder_keyboard(user_id))
 
     elif text in ["/id", "/me", "👤 আমার প্রোফাইল ও আইডি", "আমার আইডি"]:
         conn = sqlite3.connect(DB_FILE)
